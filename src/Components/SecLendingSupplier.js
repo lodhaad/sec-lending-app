@@ -17,6 +17,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import axios from 'axios';
+
 
 
 
@@ -104,7 +106,30 @@ const handleSecurityAndQuantityOnChange = e => {
 }
 
 
-const handleSubmit = e => console.log (data )
+const handleSubmit = e => {
+  
+  ///console.log (data )
+
+  
+     const options = {
+      url: '/seclending-supply-service/supply/test',
+      method: 'GET',
+      
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8'
+      }
+      
+    };
+    
+    axios(options)
+      .then(response => {
+        console.log(response.data);
+      });
+
+
+
+}
 
 
 
