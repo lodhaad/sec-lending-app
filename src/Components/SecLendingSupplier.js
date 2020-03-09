@@ -19,6 +19,8 @@ import TableRow from '@material-ui/core/TableRow';
 
 import axios from 'axios';
 
+import moment from 'moment';
+
 
 
 
@@ -60,9 +62,9 @@ const [data , setData ] = React.useState(
   {
 
     info:{
-      supplier:'',
-      dateOfSupply: new Date(),
-      securities:[]
+      supplierId:'',
+      dateOfSupply: moment(new Date()).format('YYYY-MM-DD'),
+      positions:[]
 
     }
 
@@ -73,7 +75,7 @@ const [data , setData ] = React.useState(
 const [secInput , setSecInput ] = React.useState (
 
   {
-    secCode:'',
+    securityId:'',
     quantity:''
   }
 
@@ -83,19 +85,19 @@ const [secInput , setSecInput ] = React.useState (
 
 const handleDateChange = date => {
 
-  setData ({ info: {...data.info, dateOfSupply: date}});
+  setData ({ info: {...data.info, dateOfSupply: moment(date).format('YYYY-MM-DD') }});
 
 }
 
 
 const handleSupplierOnChange = (e) => {
-  setData ({ info: {...data.info, supplier:e.target.value}});
+  setData ({ info: {...data.info, supplierId:e.target.value}});
 }
 
 
 const handleAddSecurityToGrid = e => {
 
-setData ( {info:  {...data.info, securities: [...data.info.securities, {secCode: secInput.secCode, quantity: secInput.quantity}]}})
+setData ( {info:  {...data.info, positions: [...data.info.positions, {securityId: secInput.securityId, quantity: secInput.quantity}]}})
 
 }
 
@@ -108,24 +110,18 @@ const handleSecurityAndQuantityOnChange = e => {
 
 const handleSubmit = e => {
   
-  ///console.log (data )
+  console.log (data.info )
 
   
-     const options = {
-      url: '/seclending-supply-service/supply/test',
-      method: 'GET',
-      
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
-      }
-      
-    };
     
-    axios(options)
-      .then(response => {
-        console.log(response.data);
-      });
+  
+
+
+     axios.post('/supply/batch', data.info).then(response => console.log(response.data));
+
+
+
+
 
 
 
@@ -154,7 +150,7 @@ const handleSubmit = e => {
           margin="normal"
           id="date-picker-dialog"
           label="Supply Date"
-          format="MM/dd/yyyy"
+          format="yyyy-MM-dd"
           value={data.info.dateOfSupply}
           onChange={handleDateChange}
           KeyboardButtonProps={{
@@ -171,7 +167,7 @@ const handleSubmit = e => {
 
         <Grid item xs>
 
-        <TextField style ={{ marginTop : 16 }} label = 'Security Code' name='secCode'  onChange= {handleSecurityAndQuantityOnChange}></TextField>
+        <TextField style ={{ marginTop : 16 }} label = 'Security Code' name='securityId'  onChange= {handleSecurityAndQuantityOnChange}></TextField>
         </Grid>
         <Grid item xs>
         <TextField style ={{ marginTop : 16 }} label = 'Quantity'  name = 'quantity' onChange={handleSecurityAndQuantityOnChange}></TextField>
@@ -198,10 +194,10 @@ const handleSubmit = e => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.info.securities.map(row => (
-            <TableRow key={row.secCode}>
+          {data.info.positions.map(row => (
+            <TableRow key={row.securityId}>
               <TableCell component="th" scope="row">
-                {row.secCode}
+                {row.securityId}
               </TableCell>
               <TableCell align="right">{row.quantity}</TableCell>
              
